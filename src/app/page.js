@@ -5,7 +5,7 @@ import Feed from './_components/Feed/Feed'
 import Login from './_components/Login/Login'
 import Navbar from './_components/Navbar/Navbar'
 export default function Home() {
-  const [isAuth, setIsAuth] = useState(false)
+  const [isAuth, setIsAuth] = useState(true)
   return (
     <>{isAuth ? <Feed /> : <Login />}</>
     // TODO: Complete a functioning home page
