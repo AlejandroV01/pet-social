@@ -2,12 +2,14 @@
 import Image from 'next/image'
 import React from 'react'
 import { FaComments, FaPaw } from 'react-icons/fa'
-import { IconButton } from '../Buttons/Buttons'
+import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, liked, commentsArray }) => {
   const [isLiked, setIsLiked] = React.useState(liked)
   const [likeCount, setLikeCount] = React.useState(likes)
   const [showComments, setShowComments] = React.useState(false)
   const [commentArray, setCommentArray] = React.useState(commentsArray)
+  const [commentText, setCommentText] = React.useState('')
+  const [commentCount, setCommentCount] = React.useState(comments)
   const handleLike = () => {
     console.log('Liked:', id, 'set to:', !isLiked)
     setIsLiked(!isLiked)
@@ -17,6 +19,22 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
       setLikeCount(likeCount + 1)
     }
     //TODO: Send like to DB
+  }
+  const handleComment = () => {
+    if (commentText === '') return
+    console.log('Comment on post with id of:', id, 'total comments change to:', commentArray.length + 1, '| Comment:', commentText)
+    //TODO: Send comment to DB
+    setCommentArray([
+      ...commentArray,
+      {
+        text: commentText,
+        petName: 'Ben',
+        petUsername: 'only_ben',
+        petType: 'golden retriever',
+      },
+    ])
+    setCommentText('')
+    setCommentCount(commentArray.length + 1)
   }
   return (
     <div className='shadow-2xl rounded-lg p-5 bg-[#ffd3a7]'>
@@ -35,7 +53,7 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
           <div onClick={() => setShowComments(!showComments)}>
             <IconButton icon={<FaComments />} />
           </div>
-          <p className='text-black'>{comments}</p>
+          <p className='text-black'>{commentCount}</p>
         </div>
         <div className='flex gap-1 items-center'>
           <div onClick={handleLike}>
@@ -44,6 +62,20 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
           <p className='text-black'>{likeCount}</p>
         </div>
       </div>
+      {showComments && (
+        <div className='flex gap-2 mt-3'>
+          <input
+            type='text'
+            placeholder='Post your comment'
+            className='rounded-lg px-2'
+            onChange={e => setCommentText(e.target.value)}
+            value={commentText}
+          />
+          <div onClick={handleComment}>
+            <PrimaryButton text={'Comment'} />
+          </div>
+        </div>
+      )}
       {showComments &&
         commentArray.length > 0 &&
         commentArray.map((comment, index) => (
