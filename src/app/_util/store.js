@@ -11,11 +11,10 @@ export const useGlobalStore = create()(
       set => ({
         profile_full: nullProfile,
         profile_add_profile: incomingProfile => set(state => ({ profile_full: { ...state.profile_full, profile: incomingProfile } })),
-        profileRemove: () => set(() => ({ profile: nullProfile })),
+        profileRemove: () => set(() => ({ profile_full: nullProfile })),
       }),
       {
         name: 'global-storage',
-        storage: createJSONStorage(() => localStorage),
       }
     )
   )
