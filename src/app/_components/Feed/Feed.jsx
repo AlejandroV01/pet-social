@@ -27,6 +27,15 @@ const Feed = () => {
           pfp={'https://images.squarespace-cdn.com/content/v1/62730f9d8723c151520d30f5/1652365175215-F640B37XT6I7SZY30FYE/Goldendoodle+Puppy'}
           text={'Going to the dog park today at 6pm!'}
           liked={false}
+          commentsArray={[
+            {
+              id: 1,
+              text: "I'll be there!",
+              petName: 'Ben',
+              petUsername: 'only_ben',
+              petType: 'golden retriever',
+            },
+          ]}
         />
       </div>
     </div>
