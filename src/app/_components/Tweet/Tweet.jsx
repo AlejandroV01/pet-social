@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import React from 'react'
 import { FaComments, FaPaw } from 'react-icons/fa'
+import { useGlobalStore } from '../../_util/store'
 import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, liked, commentsArray }) => {
   const [isLiked, setIsLiked] = React.useState(liked)
@@ -9,7 +10,8 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
   const [showComments, setShowComments] = React.useState(false)
   const [commentArray, setCommentArray] = React.useState(commentsArray)
   const [commentText, setCommentText] = React.useState('')
-  const [commentCount, setCommentCount] = React.useState(comments)
+  const [commentCount, setCommentCount] = React.useState(commentsArray.length)
+  const profile = useGlobalStore(state => state.profile_full.profile)
   const handleLike = () => {
     console.log('Liked:', id, 'set to:', !isLiked)
     setIsLiked(!isLiked)
@@ -20,7 +22,8 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
     }
     //TODO: Send like to DB
   }
-  const handleComment = () => {
+  const handleComment = event => {
+    event.preventDefault()
     if (commentText === '') return
     console.log('Comment on post with id of:', id, 'total comments change to:', commentArray.length + 1, '| Comment:', commentText)
     //TODO: Send comment to DB
@@ -28,9 +31,9 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
       ...commentArray,
       {
         text: commentText,
-        petName: 'Ben',
-        petUsername: 'only_ben',
-        petType: 'golden retriever',
+        petName: profile.petName,
+        petUsername: profile.username,
+        petType: profile.petType,
       },
     ])
     setCommentText('')
@@ -57,13 +60,13 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
         </div>
         <div className='flex gap-1 items-center'>
           <div onClick={handleLike}>
-            <IconButton icon={<FaPaw color={isLiked && '#ff4f4f'} />} />
+            <IconButton icon={<FaPaw color={isLiked ? '#ff4f4f' : '#fff'} />} />
           </div>
           <p className='text-black'>{likeCount}</p>
         </div>
       </div>
       {showComments && (
-        <div className='flex gap-2 mt-3'>
+        <form className='flex gap-2 mt-3' onSubmit={handleComment}>
           <input
             type='text'
             placeholder='Post your comment'
@@ -71,10 +74,8 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
             onChange={e => setCommentText(e.target.value)}
             value={commentText}
           />
-          <div onClick={handleComment}>
-            <PrimaryButton text={'Comment'} />
-          </div>
-        </div>
+          <PrimaryButton text={'Comment'} />
+        </form>
       )}
       {showComments &&
         commentArray.length > 0 &&
