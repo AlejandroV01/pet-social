@@ -100,14 +100,52 @@ const CreateAccount = () => {
 const SignIn = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const handleSubmit = event => {
+  const addProfile = useGlobalStore(state => state.profile_add_profile)
+  const handleSubmit = async event => {
     event.preventDefault()
     if (email === '' || password === '') return
 
-    console.log('Submitted:', { email, password })
+    try {
+      const response = await fetch('/api/sign-in', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        addProfile(data.petUser)
+        toast.success('Signed In!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+      } else {
+        const error = await response.json()
+        console.log(error)
+        toast.error(error.error, {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
 
     //TODO: Check if email and password match DB
   }
+
   return (
     <div className='bg-white px-6 py-6 rounded-xl max-w-[400px] w-full'>
       <h1 className='text-green-600 text-sm text-center'>Already have an account?</h1>

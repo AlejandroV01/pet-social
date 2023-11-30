@@ -20,22 +20,24 @@ const Feed = () => {
           <input type='text' placeholder='Search for pets...' className='p-2 rounded-lg' />
           <IconButton icon={<FaSearch size={18} />} />
         </div>
-        {posts.map((post, index) => {
-          console.log(post)
-          return (
-            <Tweet
-              key={index}
-              id={post.id}
-              likes={post.likes}
-              petName={post.petName}
-              petUsername={post.username}
-              petType={post.petType}
-              text={post.text}
-              liked={false}
-              commentsArray={post.comments}
-            />
-          )
-        })}
+        {posts !== null &&
+          posts.length > 0 &&
+          posts.map((post, index) => {
+            console.log(post)
+            return (
+              <Tweet
+                key={index}
+                id={post.id}
+                likes={post.likes}
+                petName={post.petName}
+                petUsername={post.username}
+                petType={post.petType}
+                text={post.text}
+                liked={false}
+                commentsArray={post.comments}
+              />
+            )
+          })}
       </div>
     </div>
   )
