@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
+import { toast } from 'react-toastify'
 import { useGlobalStore } from '../../_util/store'
-
 import { PrimaryButton } from '../Buttons/Buttons'
 const Login = () => {
   return (
@@ -25,16 +25,6 @@ const CreateAccount = () => {
     event.preventDefault()
     if (username === '' || email === '' || password === '' || petName === '' || petType === '') return
 
-    const profile = {
-      username: username,
-      email: email,
-      petName: petName,
-      password: password,
-      petType: petType,
-    }
-
-    await addProfile(profile)
-
     try {
       const response = await fetch(
         `http://localhost:3000/api/create-account?username=${username}&email=${email}&password=${password}&petName=${petName}&petType=${petType}`,
@@ -42,14 +32,33 @@ const CreateAccount = () => {
           method: 'GET',
         }
       )
-
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Error:', errorData.error)
+        console.error('Error:', errorData)
+        toast.error('Username or email taken, try again!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
       } else {
         // Handle success if needed
         const responseData = await response.json()
         console.log('Response:', responseData)
+        toast.success('Account Created! Now Sign In with the same information', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
       }
     } catch (error) {
       // Handle any network or fetch-related errors
@@ -82,10 +91,7 @@ const CreateAccount = () => {
           Password:
           <input className='border-2 border-mainGreen rounded-lg' type='password' value={password} onChange={e => setPassword(e.target.value)} />
         </label>
-
-        <button type='submit'>
-          <PrimaryButton text={'Create Account'}></PrimaryButton>
-        </button>
+        <PrimaryButton text={'Create Account'} />
       </form>
     </div>
   )
@@ -115,9 +121,7 @@ const SignIn = () => {
           Password:
           <input className='border-2 border-mainGreen rounded-lg' type='password' value={password} onChange={e => setPassword(e.target.value)} />
         </label>
-        <button type='submit'>
-          <PrimaryButton text={'Sign In'}></PrimaryButton>
-        </button>
+        <PrimaryButton text={'Sign In'} />
       </form>
     </div>
   )
