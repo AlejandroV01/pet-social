@@ -16,7 +16,7 @@ const nullProfile = {
       user: 2,
       username: 'm_dog',
       petName: 'Maxy',
-      petType: 'Yorkshire Terrier',
+      petType: 'Yorkshire',
       comments: [
         {
           id: 1,

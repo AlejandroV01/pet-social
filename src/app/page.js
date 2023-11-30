@@ -10,7 +10,7 @@ export default function Home() {
   const isAuth = useGlobalStore(state => state.profile_full.profile !== null)
   console.log(isAuth)
   return (
-    <>{isAuth ? <Login /> : <Login />}</>
+    <>{isAuth ? <Feed /> : <Login />}</>
     // TODO: Complete a functioning home page
   )
 }

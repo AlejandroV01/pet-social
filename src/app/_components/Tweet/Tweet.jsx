@@ -7,7 +7,7 @@ import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 import ProfilePicture from '../ProfileAssets/ProfilePicture'
 const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, liked, commentsArray }) => {
   const [isLiked, setIsLiked] = React.useState(liked)
-  const [likeCount, setLikeCount] = React.useState(likes)
+  const [likeCount, setLikeCount] = React.useState(likes ? likes : 0)
   const [showComments, setShowComments] = React.useState(false)
   const [commentArray, setCommentArray] = React.useState(commentsArray)
   const [commentText, setCommentText] = React.useState('')
@@ -72,11 +72,11 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
         </div>
       </div>
       {showComments && (
-        <form className='flex gap-2 mt-3 ' onSubmit={handleComment}>
+        <form className='flex gap-2 mt-3 w-full' onSubmit={handleComment}>
           <input
             type='text'
             placeholder='Post your comment'
-            className='rounded-lg  pl-2'
+            className='rounded-lg  flex-1 pl-2'
             onChange={e => setCommentText(e.target.value)}
             value={commentText}
           />
@@ -87,14 +87,14 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
         commentArray.length > 0 &&
         commentArray.map((comment, index) => (
           <div className='flex gap-3 items-center mt-5 items-start' key={index}>
-            <ProfilePicture size={35} id={comment.petUsername} />
+            <ProfilePicture size={35} id={comment.username} />
             <div className='flex flex-col items-start'>
               <div className='flex gap-2'>
-                <p className='text-black font-bold'>{comment.petName}</p>
-                <p className='text-neutral-500'>@{comment.petUsername}</p>
-                <p className='text-neutral-400'>({comment.petType})</p>
+                <p className='text-black font-bold text-sm'>{comment.petName}</p>
+                <p className='text-neutral-500 text-sm'>@{comment.username}</p>
+                <p className='text-neutral-400 text-sm'>({comment.petType})</p>
               </div>
-              <p className='text-black'>{comment.text}</p>
+              <p className='text-black text-sm'>{comment.text}</p>
             </div>
           </div>
         ))}
