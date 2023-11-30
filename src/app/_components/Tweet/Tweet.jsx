@@ -86,7 +86,7 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
       {showComments &&
         commentArray.length > 0 &&
         commentArray.map((comment, index) => (
-          <div className='flex gap-3 items-center mt-5 items-start' key={index}>
+          <div className='flex gap-3 mt-5 items-start' key={index}>
             <ProfilePicture size={35} id={comment.username} />
             <div className='flex flex-col items-start'>
               <div className='flex gap-2'>

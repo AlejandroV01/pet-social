@@ -20,10 +20,11 @@ const CreateAccount = () => {
   const [password, setPassword] = useState('')
   const [petType, setPetType] = useState('')
   const addProfile = useGlobalStore(state => state.profile_add_profile)
-  const handleSubmit = event => {
+
+  const handleSubmit = async event => {
     event.preventDefault()
-    if (username === '' || email === '' || petName === '' || password === '' || petType === '') return
-    console.log('Submitted:', { username, email, petName, password, petType })
+    if (username === '' || email === '' || password === '' || petName === '' || petType === '') return
+
     const profile = {
       username: username,
       email: email,
@@ -31,9 +32,31 @@ const CreateAccount = () => {
       password: password,
       petType: petType,
     }
-    addProfile(profile)
-    //TODO: Send data to DB
+
+    await addProfile(profile)
+
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/create-account?username=${username}&email=${email}&password=${password}&petName=${petName}&petType=${petType}`,
+        {
+          method: 'GET',
+        }
+      )
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Error:', errorData.error)
+      } else {
+        // Handle success if needed
+        const responseData = await response.json()
+        console.log('Response:', responseData)
+      }
+    } catch (error) {
+      // Handle any network or fetch-related errors
+      console.error('Network or fetch error:', error)
+    }
   }
+
   return (
     <div className='bg-white px-6 py-6 rounded-xl max-w-[400px] w-full'>
       <h1 className='text-orange-600 text-sm text-center'>Looks like you don&apos;t have an account</h1>
