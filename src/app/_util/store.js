@@ -9,6 +9,40 @@ const nullProfile = {
     password: '12345',
     petType: 'Goldendoodle',
   },
+  posts: [
+    {
+      id: 1,
+      text: 'I love toys!',
+      user: 2,
+      username: 'm_dog',
+      petName: 'Maxy',
+      petType: 'Yorkshire Terrier',
+      comments: [
+        {
+          id: 1,
+          text: 'I will be there!',
+          user: 1,
+          username: 'Benji_official',
+          petName: 'Benji',
+          petType: 'Goldendoodle',
+        },
+      ],
+    },
+  ],
+  profiles: [
+    {
+      id: 1,
+      username: 'Benji_official',
+      petName: 'Benji',
+      petType: 'Goldendoodle',
+    },
+    {
+      id: 2,
+      username: 'm_dog',
+      petName: 'Maxy',
+      petType: 'Yorkshire Terrier',
+    },
+  ],
 }
 
 export const useGlobalStore = create()(
