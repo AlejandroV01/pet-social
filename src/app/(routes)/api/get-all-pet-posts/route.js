@@ -3,11 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
-    const petUsername = searchParams.get("petUsername");
+    const username = searchParams.get("username");
 
-    if (!petUsername) {
+    if (!username) {
         return NextResponse.json(
-            { error: "Missing petUsername" },
+            { error: "Missing username" },
             { status: 500 }
         );
     }
@@ -25,12 +25,12 @@ export async function GET(request) {
                 LEFT JOIN
                     Likes l ON p.id = l.posts_id
                 WHERE
-                    p.pets_username = ${petUsername}
+                    p.pets_username = ${username}
                 GROUP BY
                     p.id, p.pets_username, p.text;`;
         
         return NextResponse.json(
-            { posts },
+            { posts : posts.rows },
             { status: 200 }
         );
     } catch (error) {
