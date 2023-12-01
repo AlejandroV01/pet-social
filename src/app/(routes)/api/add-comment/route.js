@@ -5,7 +5,7 @@ export async function POST(request) {
     const { searchParams } = new URL(request.url);
     const postId = searchParams.get("postId");
     const username = searchParams.get("username");
-    const comment = searchParams.get("username");
+    const comment = searchParams.get("comment");
 
     try {
         if (!postId || !username || !comment) {
