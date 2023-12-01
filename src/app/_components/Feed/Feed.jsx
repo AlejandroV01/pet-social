@@ -32,7 +32,7 @@ const Feed = () => {
   }
   const handleLike = async id => {
     try {
-      const response = await fetch(`/api/add-like?postId=${id}&petUsername=${profile.username}`, {
+      const response = await fetch(`/api/add-like?postId=${id}&username=${profile.username}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -48,7 +48,26 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
-  const handleComment = async (id, commentText) => {}
+  const handleComment = async (e, id, commentText) => {
+    e.preventDefault()
+    try {
+      const response = await fetch(`/api/add-comment?postId=${id}&username=${profile.username}&comment=${commentText}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentText }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        loadFeedData()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
 
   return (
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
@@ -60,10 +79,10 @@ const Feed = () => {
         </div>
         {feedData !== null &&
           feedData.length > 0 &&
-          feedData.map((post, index) => {
+          feedData.map(post => {
             return (
               <Tweet
-                key={index}
+                key={post.id}
                 id={post.id}
                 likes={post.like_count}
                 petName={post.petname}
