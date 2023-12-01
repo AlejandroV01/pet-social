@@ -10,14 +10,31 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Requesting from a false username' }, { status: 500 })
     }
     const posts = await sql`
-      SELECT p.id, p.pets_username, p.text, pet.petName, pet.petType,
-      (SELECT COUNT(*) FROM Likes l WHERE l.posts_id = p.id) AS like_count,
-      EXISTS (SELECT 1 FROM Likes l WHERE l.posts_id = p.id AND l.pets_username = ${username}) AS liked_by_user,
-      (SELECT JSON_AGG(json_build_object('id', c.id, 'pets_username', c.pets_username, 'comment_text', c.comment_text, 'created_at', c.created_at))
-      FROM Comments c 
-      WHERE c.posts_id = p.id) AS comments
-      FROM Posts p
-      JOIN Pets pet ON p.pets_username = pet.username;
+  SELECT 
+    p.id, 
+    p.pets_username, 
+    p.text, 
+    pet.petName, 
+    pet.petType,
+    (SELECT COUNT(*) FROM Likes l WHERE l.posts_id = p.id) AS like_count,
+    EXISTS (SELECT 1 FROM Likes l WHERE l.posts_id = p.id AND l.pets_username = ${username}) AS liked_by_user,
+    (SELECT JSON_AGG(
+        json_build_object(
+            'id', c.id, 
+            'pets_username', c.pets_username, 
+            'comment_text', c.comment_text, 
+            'created_at', c.created_at,
+            'pet_info', json_build_object('petName', pet.petName, 'petType', pet.petType)
+        )
+      )
+    FROM Comments c 
+    JOIN Pets pet ON c.pets_username = pet.username
+    WHERE c.posts_id = p.id) AS comments
+  FROM 
+    Posts p
+  JOIN 
+    Pets pet ON p.pets_username = pet.username;
+
     `
     const allPosts = posts.rows
     return NextResponse.json({ allPosts }, { status: 200 })

@@ -66,7 +66,7 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
               <div onClick={handleLike}>
                 <IconButton icon={<FaPaw color={isLiked ? '#ff4f4f' : '#fff'} />} />
               </div>
-              <p className='text-black'>{likeCount}</p>
+              <p className='text-black'>{likes}</p>
             </div>
           </div>
         </div>

@@ -4,14 +4,33 @@ import { useGlobalStore } from '../../_util/store'
 import { IconButton } from '../Buttons/Buttons'
 import Tweet from '../Tweet/Tweet'
 const Feed = () => {
-  const [feedData, setFeedData] = React.useState([])
-  const loadFeedData = () => {
-    //Get feed data from DB
-    //Feed data will likely be an array of objects
-    //objects would be the most recent posts to the database
-  }
   const profile = useGlobalStore(state => state.profile_full.profile)
   const posts = useGlobalStore(state => state.profile_full.posts)
+  const [feedData, setFeedData] = React.useState([])
+  useEffect(() => {
+    console.log('Feed.jsx: useEffect')
+    loadFeedData()
+  }, [])
+  const loadFeedData = async () => {
+    try {
+      const response = await fetch(`/api/load-posts?username=${profile.username}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        const postArray = data.allPosts
+        console.log(data)
+        setFeedData(postArray)
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+
   return (
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
       <h1 className='font-bold text-lg text-left'>Hello, {profile.petName}</h1>
@@ -20,20 +39,20 @@ const Feed = () => {
           <input type='text' placeholder='Search for pets...' className='p-2 rounded-lg' />
           <IconButton icon={<FaSearch size={18} />} />
         </div>
-        {posts !== null &&
-          posts.length > 0 &&
-          posts.map((post, index) => {
+        {feedData !== null &&
+          feedData.length > 0 &&
+          feedData.map((post, index) => {
             console.log(post)
             return (
               <Tweet
                 key={index}
                 id={post.id}
-                likes={post.likes}
-                petName={post.petName}
-                petUsername={post.username}
-                petType={post.petType}
+                likes={post.like_count}
+                petName={post.petname}
+                petUsername={post.pets_username}
+                petType={post.pettype}
                 text={post.text}
-                liked={false}
+                liked={post.liked_by_user}
                 commentsArray={post.comments}
               />
             )
