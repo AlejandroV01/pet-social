@@ -7,7 +7,7 @@ export async function POST(request) {
   const username = searchParams.get("username");
 
   if (!text || !username) {
-      return NextResponse.json({ error: "Missing username or text" }, { status: 500 });
+      return NextResponse.json({ error: "Missing username or text" }, { status: 400 });
   }
 
 

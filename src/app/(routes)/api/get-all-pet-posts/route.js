@@ -8,7 +8,7 @@ export async function GET(request) {
     if (!username) {
         return NextResponse.json(
             { error: "Missing username" },
-            { status: 500 }
+            { status: 400 }
         );
     }
 

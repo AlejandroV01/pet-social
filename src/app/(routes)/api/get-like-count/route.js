@@ -8,7 +8,7 @@ export async function GET(request) {
     if (!postId) {
         return NextResponse.json(
             { error: "Missing postId" },
-            { status: 500 }
+            { status: 400 }
         );
     }
 

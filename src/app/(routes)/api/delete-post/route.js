@@ -9,7 +9,7 @@ export async function POST(request) {
     if (!postId || !username) {
         return NextResponse.json(
             { error: "Missing postId or username" },
-            { status: 500 }
+            { status: 400 }
         );
     }
     try {

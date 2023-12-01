@@ -6,7 +6,7 @@ export async function POST(request) {
     const postId = searchParams.get("postId");
 
     if (!postId) {
-        return NextResponse.json({ error: "Missing postId" }, { status: 500 });
+        return NextResponse.json({ error: "Missing postId" }, { status: 400 });
     }
 
     try {
