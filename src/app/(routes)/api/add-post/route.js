@@ -2,7 +2,14 @@ import { sql } from '@vercel/postgres'
 import { NextResponse } from 'next/server'
 
 export async function POST(request) {
-  const { text, username } = await request.json()
+  const { searchParams } = new URL(request.url);
+  const text = searchParams.get("text");
+  const username = searchParams.get("username");
+
+  if (!text || !username) {
+      return NextResponse.json({ error: "Missing username or text" }, { status: 500 });
+  }
+
 
   try {
     if (!text || !username) {
@@ -14,6 +21,6 @@ export async function POST(request) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  const posts = await sql`SELECT * FROM Posts;`
+  const posts = (await sql`SELECT * FROM Posts WHERE pets_username = ${username};`).rows
   return NextResponse.json({ posts }, { status: 200 })
 }
