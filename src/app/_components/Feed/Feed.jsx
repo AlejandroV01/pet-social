@@ -30,6 +30,25 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
+  const handleLike = async id => {
+    try {
+      const response = await fetch(`/api/add-like?postId=${id}&petUsername=${profile.username}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        loadFeedData()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleComment = async (id, commentText) => {}
 
   return (
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
@@ -42,7 +61,6 @@ const Feed = () => {
         {feedData !== null &&
           feedData.length > 0 &&
           feedData.map((post, index) => {
-            console.log(post)
             return (
               <Tweet
                 key={index}
@@ -54,6 +72,8 @@ const Feed = () => {
                 text={post.text}
                 liked={post.liked_by_user}
                 commentsArray={post.comments}
+                handleLike={handleLike}
+                handleComment={handleComment}
               />
             )
           })}
