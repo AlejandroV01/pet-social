@@ -34,7 +34,7 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
               <div onClick={() => setShowComments(!showComments)}>
                 <IconButton icon={<FaComments />} />
               </div>
-              <p className='text-black'>{commentCount}</p>
+              <p className='text-black'>{commentsArray !== null ? commentsArray.length : 0}</p>
             </div>
             <div className='flex gap-1 items-center'>
               <div onClick={() => handleLike(id)}>
@@ -48,8 +48,8 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
       {showComments && (
         <form
           className='flex gap-2 mt-3 w-full'
-          onSubmit={() => {
-            handleComment(id, commentText)
+          onSubmit={e => {
+            handleComment(e, id, commentText)
             setCommentText('')
           }}
         >
@@ -64,8 +64,9 @@ const Tweet = ({ id, text, likes, comments, pfp, petName, petUsername, petType, 
         </form>
       )}
       {showComments &&
-        commentArray.length > 0 &&
-        commentArray.map((comment, index) => (
+        commentsArray !== null &&
+        commentsArray.length > 0 &&
+        commentsArray.map((comment, index) => (
           <div className='flex gap-3 mt-5 items-start' key={index}>
             <ProfilePicture size={35} id={comment.username} />
             <div className='flex flex-col items-start'>
