@@ -8,7 +8,7 @@ import { useGlobalStore } from './_util/store'
 export default function Home() {
   const fullProfile = useGlobalStore(state => state.profile_full)
   const isAuth = useGlobalStore(state => state.profile_full.profile !== null)
-  console.log(fullProfile)
+
   return (
     <>{isAuth ? <Feed /> : <Login />}</>
     // TODO: Complete a functioning home page
