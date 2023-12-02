@@ -1,12 +1,14 @@
 // Import necessary libraries and components
+import { useRouter } from 'next/navigation'
 import { FaCheck } from 'react-icons/fa'
 import { IoMdPersonAdd } from 'react-icons/io'
 import { IoPersonRemove } from 'react-icons/io5'
 import { useGlobalStore } from '../../_util/store'
 import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 import ProfilePicture from '../ProfileAssets/ProfilePicture'
-const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false, handleAddFriend, handleRemoveFriend }) => {
+const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false, handleAddFriend }) => {
   const profile = useGlobalStore(state => state.profile_full.profile)
+  const router = useRouter()
   return (
     <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 px-6'>
       <div className='bg-white p-8 rounded-lg shadow-lg max-w-md w-full'>
@@ -30,9 +32,23 @@ const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false,
               console.log(petUser.pets_data_1)
               return (
                 <li key={index} className=' flex gap-4 items-center border-b border-neutral-300 pb-3'>
-                  <ProfilePicture id={isFriend ? petUser.pets_data_1.username : petUser.username} size={40} />
-                  <p className='text-lg font-semibold'>{isFriend ? petUser.pets_data_1.petname : petUser.petname}</p>
-                  <p className='text-lg font-semibold font-normal text-neutral-500'>@{isFriend ? petUser.pets_data_1.username : petUser.username}</p>
+                  <ProfilePicture username={isFriend ? petUser.pets_data_1.username : petUser.username} size={40} />
+                  <p
+                    className='text-lg font-semibold cursor-pointer hover:underline'
+                    onClick={() => {
+                      router.push(`/profile/${petUser.username}`)
+                    }}
+                  >
+                    {isFriend ? petUser.pets_data_1.petname : petUser.petname}
+                  </p>
+                  <p
+                    className='text-lg font-normal text-neutral-500 cursor-pointer hover:underline'
+                    onClick={() => {
+                      router.push(`/profile/${petUser.username}`)
+                    }}
+                  >
+                    @{isFriend ? petUser.pets_data_1.username : petUser.username}
+                  </p>
                   {isFriend && (
                     <>
                       {searchTerm === 'Friends' ? (

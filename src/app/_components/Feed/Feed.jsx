@@ -215,7 +215,7 @@ const Feed = () => {
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
       <h1 className='font-bold text-lg text-left'>Hello, {profile.petname}</h1>
       <div className='flex flex-col items-center gap-5 mt-5'>
-        <form className='flex gap-2' onSubmit={e => handleSearch(e)}>
+        <form className='flex gap-2 items-center' onSubmit={e => handleSearch(e)}>
           <input
             type='text'
             placeholder='Search for pets...'
