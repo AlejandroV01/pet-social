@@ -304,7 +304,7 @@ const Page = ({ params }) => {
     <>
       {visitedProfile !== null && profile !== null && (
         <div className='flex flex-col items-center gap-5'>
-          <ProfilePicture username={profile.username} size={125} />
+          <ProfilePicture username={visitedProfile.username} size={125} />
           <h1 className='text-2xl text-black font-bold'>{visitedProfile.petname}</h1>
           <p className='text-neutral-500'>@{visitedProfile.username}</p>
           {pendingFriend != null && friends !== null && (

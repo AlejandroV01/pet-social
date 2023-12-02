@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import { FaCheck } from 'react-icons/fa'
 import { IoMdPersonAdd } from 'react-icons/io'
 import { IoPersonRemove } from 'react-icons/io5'
+import page from '../../(routes)/profile/page'
 import { useGlobalStore } from '../../_util/store'
 import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 import ProfilePicture from '../ProfileAssets/ProfilePicture'
@@ -83,3 +84,7 @@ const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false,
 }
 
 export default SearchPet
+
+// TODO: Add a tweet on the home page
+// TODO: in the friend request page in SearchPets.jsx have name and the username under with flex-col
+// TODO: when you click your friends you should see the other persons profile, sometimes you see your own
