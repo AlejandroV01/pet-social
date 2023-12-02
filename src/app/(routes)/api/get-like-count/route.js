@@ -13,9 +13,9 @@ export async function GET(request) {
     }
 
     try {
-        let likes = await sql`SELECT * FROM Likes WHERE posts_id = ${postId};`;
+        let likes = await sql`SELECT * FROM vw_PostExtendsLike WHERE id = ${postId};`;
         return NextResponse.json(
-            { likeCount: likes.rowCount},
+            { likeCount: likes.rows[0].count},
             { status: 200 }
         );
     } catch (error) {
