@@ -14,6 +14,12 @@ export async function GET(request) {
 
     try {
         let likes = await sql`SELECT * FROM vw_PostExtendsLike WHERE id = ${postId};`;
+        if (likes.rowCount===0){
+            return NextResponse.json(
+                { likeCount: 0},
+                { status: 200 }
+            );
+        }
         return NextResponse.json(
             { likeCount: likes.rows[0].count},
             { status: 200 }
