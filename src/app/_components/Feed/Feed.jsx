@@ -37,6 +37,16 @@ const Feed = () => {
     }
   }
   const handleLike = async id => {
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
     try {
       const response = await fetch(`/api/add-like?postId=${id}&username=${profile.username}`, {
         method: 'POST',
@@ -44,7 +54,16 @@ const Feed = () => {
       })
       if (response.ok) {
         const data = await response.json()
-        console.log(data)
+        toast.success('Post Liked!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
         loadFeedData()
       } else {
         const error = await response.json()
@@ -54,7 +73,18 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
-  const handleSearch = async () => {
+  const handleSearch = async e => {
+    e.preventDefault()
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
     try {
       const response = await fetch(`/api/search-pet?search=${searchTerm}`, {
         method: 'GET',
@@ -62,6 +92,16 @@ const Feed = () => {
       })
       if (response.ok) {
         const data = await response.json()
+        toast.success('Loaded all Results', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
         setSearchPets(data.pets)
       } else {
         const error = await response.json()
@@ -74,6 +114,16 @@ const Feed = () => {
   }
   const handleComment = async (e, id, commentText) => {
     e.preventDefault()
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
     try {
       const response = await fetch(`/api/add-comment?postId=${id}&username=${profile.username}&comment=${commentText}`, {
         method: 'POST',
@@ -83,6 +133,16 @@ const Feed = () => {
       if (response.ok) {
         const data = await response.json()
         console.log(data)
+        toast.success('Nice Comment!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
         loadFeedData()
       } else {
         const error = await response.json()
@@ -96,6 +156,16 @@ const Feed = () => {
     setSearchVisible(false)
   }
   const handleDeleteComment = async commentId => {
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
     try {
       const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}`, {
         method: 'DELETE',
@@ -122,7 +192,55 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
+  const handleEditComment = async (e, commentId, comment) => {
+    e.preventDefault()
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
+    try {
+      const response = await fetch(`/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Comment Edited', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        loadFeedData()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
   const handleDeletePost = async postId => {
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
     try {
       const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}`, {
         method: 'DELETE',
@@ -149,11 +267,12 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
+  console.log(profile)
   return (
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
-      <h1 className='font-bold text-lg text-left'>Hello, {profile.petName}</h1>
+      <h1 className='font-bold text-lg text-left'>Hello, {profile.petname}</h1>
       <div className='flex flex-col items-center gap-5 mt-5'>
-        <div className='flex gap-2'>
+        <form className='flex gap-2' onSubmit={e => handleSearch(e)}>
           <input
             type='text'
             placeholder='Search for pets...'
@@ -165,7 +284,7 @@ const Feed = () => {
             <IconButton icon={<FaSearch size={18} />} />
           </div>
           {isSearchVisible && <SearchPet searchTerm={searchTerm} searchPets={searchPets} handleClosePopup={handleClosePopup} />}
-        </div>
+        </form>
         {feedData !== null &&
           feedData.length > 0 &&
           feedData.map(post => {
@@ -184,6 +303,7 @@ const Feed = () => {
                 handleComment={handleComment}
                 handleDeleteComment={handleDeleteComment}
                 handleDeletePost={handleDeletePost}
+                handleEditComment={handleEditComment}
               />
             )
           })}

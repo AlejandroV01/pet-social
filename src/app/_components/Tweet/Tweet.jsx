@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from 'next/image'
 import React from 'react'
-import { FaComments, FaPaw, FaTrash } from 'react-icons/fa'
+import { FaComments, FaEdit, FaPaw, FaTrash } from 'react-icons/fa'
 import { useGlobalStore } from '../../_util/store'
 import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 import ProfilePicture from '../ProfileAssets/ProfilePicture'
@@ -20,10 +20,14 @@ const Tweet = ({
   handleComment,
   handleDeleteComment,
   handleDeletePost,
+  handleEditComment,
 }) => {
   const [showComments, setShowComments] = React.useState(false)
   const [commentText, setCommentText] = React.useState('')
   const profile = useGlobalStore(state => state.profile_full.profile)
+  const [isEdit, setIsEdit] = React.useState(false)
+  const [editCommentText, setEditCommentText] = React.useState('')
+  const [editId, setEditId] = React.useState('')
   return (
     <div className='shadow-2xl rounded-lg p-5 bg-[#ffd3a7] flex items-start flex-col w-full lg:w-[450px]'>
       <div className='flex gap-5 items-start'>
@@ -90,11 +94,43 @@ const Tweet = ({
                 <p className='text-neutral-500 text-sm mt-0'>@{comment.pets_username}</p>
                 <p className='text-neutral-400 text-sm mt-0'>({comment.pet_info.petType})</p>
               </div>
-              <p className='text-black text-sm'>{comment.comment_text}</p>
+              {isEdit && comment.id === editId ? (
+                <form
+                  className='flex gap-2 mt-3 w-full'
+                  onSubmit={e => {
+                    handleEditComment(e, comment.id, editCommentText)
+                    setIsEdit(false)
+                    setEditCommentText('')
+                  }}
+                >
+                  <input
+                    type='text'
+                    placeholder='Post your comment'
+                    className='rounded-lg flex-1 pl-2'
+                    onChange={e => setEditCommentText(e.target.value)}
+                    value={editCommentText}
+                  />
+                  <PrimaryButton text={'Edit'} />
+                </form>
+              ) : (
+                <p className='text-black text-sm'>{comment.comment_text}</p>
+              )}
             </div>
             {comment.pets_username === profile.username && (
-              <div className='ml-auto' onClick={() => handleDeleteComment(comment.id)}>
-                <IconButton icon={<FaTrash />} />
+              <div className='flex items-center gap-2'>
+                <div
+                  className='ml-auto'
+                  onClick={() => {
+                    setEditId(comment.id)
+                    setEditCommentText(comment.comment_text)
+                    setIsEdit(!isEdit)
+                  }}
+                >
+                  <IconButton icon={<FaEdit />} />
+                </div>
+                <div className='ml-auto' onClick={() => handleDeleteComment(comment.id)}>
+                  <IconButton icon={<FaTrash />} />
+                </div>
               </div>
             )}
           </div>
