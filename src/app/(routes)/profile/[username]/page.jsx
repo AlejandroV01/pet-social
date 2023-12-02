@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { PrimaryButton } from '../../../_components/Buttons/Buttons'
+import { AdminButton, PrimaryButton } from '../../../_components/Buttons/Buttons'
 import ProfilePicture from '../../../_components/ProfileAssets/ProfilePicture'
 import SearchPet from '../../../_components/SearchPet/SearchPet'
 import Tweet from '../../../_components/Tweet/Tweet'
@@ -219,7 +219,7 @@ const Page = ({ params }) => {
   }
   const handleDeleteComment = async commentId => {
     try {
-      const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}`, {
+      const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}&admin=${profile.is_admin}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -248,10 +248,13 @@ const Page = ({ params }) => {
     e.preventDefault()
 
     try {
-      const response = await fetch(`/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-      })
+      const response = await fetch(
+        `/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}&admin=${profile.is_admin}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
       if (response.ok) {
         const data = await response.json()
         toast.success('Comment Edited', {
@@ -275,7 +278,7 @@ const Page = ({ params }) => {
   }
   const handleDeletePost = async postId => {
     try {
-      const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}`, {
+      const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}&admin=${profile.is_admin}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -292,6 +295,33 @@ const Page = ({ params }) => {
           theme: 'dark',
         })
         getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleDeleteUser = async () => {
+    try {
+      const response = await fetch(`/api/delete-user?username=${params.username}&admin=${profile.is_admin}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('User Deleted', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        router.push('/')
       } else {
         const error = await response.json()
         console.log(error)
@@ -343,6 +373,11 @@ const Page = ({ params }) => {
               )}
             </div>
           )}
+          {profile.is_admin && params.username !== profile.username && (
+            <div onClick={handleDeleteUser}>
+              <AdminButton text={'DELETE USER'} />
+            </div>
+          )}
           {visitedProfile.username !== profile.username ? (
             <div className='flex gap-5'>
               <div
@@ -356,7 +391,6 @@ const Page = ({ params }) => {
           ) : (
             <div className='flex flex-col gap-5 items-center'>
               <div className='flex gap-5'>
-                <PrimaryButton text={'Edit Profile'} />
                 <div onClick={() => setIsAddingPost(!isAddingPost)}>
                   <PrimaryButton text={'Add a Post'} />
                 </div>

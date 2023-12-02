@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import { useGlobalStore } from '../../_util/store'
-import { IconButton } from '../Buttons/Buttons'
+import { IconButton, PrimaryButton } from '../Buttons/Buttons'
 import SearchPet from '../SearchPet/SearchPet'
 import Tweet from '../Tweet/Tweet'
 const Feed = () => {
@@ -129,7 +129,7 @@ const Feed = () => {
   }
   const handleDeleteComment = async commentId => {
     try {
-      const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}`, {
+      const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}&admin=${profile.is_admin}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -156,12 +156,14 @@ const Feed = () => {
   }
   const handleEditComment = async (e, commentId, comment) => {
     e.preventDefault()
-
     try {
-      const response = await fetch(`/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-      })
+      const response = await fetch(
+        `/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}&admin=${profile.is_admin}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      )
       if (response.ok) {
         const data = await response.json()
         toast.success('Comment Edited', {
@@ -185,7 +187,7 @@ const Feed = () => {
   }
   const handleDeletePost = async postId => {
     try {
-      const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}`, {
+      const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}&admin=${profile.is_admin}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -210,7 +212,37 @@ const Feed = () => {
       console.error('Error', error)
     }
   }
+  const handleAddPost = async (e, text) => {
+    e.preventDefault()
+    try {
+      const response = await fetch(`/api/add-post?username=${profile.username}&text=${text}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Successfully Barked a Post!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        loadFeedData()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
   console.log(profile)
+  const [isAddingPost, setIsAddingPost] = useState(false)
+  const [postText, setPostText] = useState('')
   return (
     <div className='ml-auto mr-auto max-w-[1170px] w-full px-6'>
       <h1 className='font-bold text-lg text-left'>Hello, {profile.petname}</h1>
@@ -228,6 +260,28 @@ const Feed = () => {
           </div>
           {isSearchVisible && <SearchPet searchTerm={searchTerm} searchPets={searchPets} handleClosePopup={handleClosePopup} />}
         </form>
+        <div onClick={() => setIsAddingPost(!isAddingPost)}>
+          <PrimaryButton text={'Add a Post'} />
+        </div>
+        {isAddingPost && (
+          <form
+            className='flex gap-2 mt-3 w-full'
+            onSubmit={e => {
+              handleAddPost(e, postText)
+              setIsAddingPost(false)
+              setPostText('')
+            }}
+          >
+            <input
+              type='text'
+              placeholder='Post something...'
+              className='rounded-lg flex-1 pl-2'
+              onChange={e => setPostText(e.target.value)}
+              value={postText}
+            />
+            <PrimaryButton text={'Post!'} />
+          </form>
+        )}
         {feedData !== null &&
           feedData.length > 0 &&
           feedData.map(post => {

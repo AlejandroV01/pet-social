@@ -10,6 +10,7 @@ import ProfilePicture from '../ProfileAssets/ProfilePicture'
 const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false, handleAddFriend }) => {
   const profile = useGlobalStore(state => state.profile_full.profile)
   const router = useRouter()
+  console.log(searchPets)
   return (
     <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50 px-6'>
       <div className='bg-white p-8 rounded-lg shadow-lg max-w-md w-full'>
@@ -34,22 +35,26 @@ const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false,
               return (
                 <li key={index} className=' flex gap-4 items-center border-b border-neutral-300 pb-3'>
                   <ProfilePicture username={isFriend ? petUser.pets_data_1.username : petUser.username} size={40} />
-                  <p
-                    className='text-lg font-semibold cursor-pointer hover:underline'
-                    onClick={() => {
-                      router.push(`/profile/${petUser.username}`)
-                    }}
-                  >
-                    {isFriend ? petUser.pets_data_1.petname : petUser.petname}
-                  </p>
-                  <p
-                    className='text-lg font-normal text-neutral-500 cursor-pointer hover:underline'
-                    onClick={() => {
-                      router.push(`/profile/${petUser.username}`)
-                    }}
-                  >
-                    @{isFriend ? petUser.pets_data_1.username : petUser.username}
-                  </p>
+                  <div className='flex flex-col lg:flex-row lg:gap-3 justify-center'>
+                    <p
+                      className='text-lg font-semibold cursor-pointer hover:underline'
+                      onClick={() => {
+                        if (isFriend) router.push(`/profile/${petUser.pets_data_1.username}`)
+                        else router.push(`/profile/${petUser.username}`)
+                      }}
+                    >
+                      {isFriend ? petUser.pets_data_1.petname : petUser.petname}
+                    </p>
+                    <p
+                      className='text-lg font-normal text-neutral-500 cursor-pointer hover:underline'
+                      onClick={() => {
+                        if (isFriend) router.push(`/profile/${petUser.pets_data_1.username}`)
+                        else router.push(`/profile/${petUser.username}`)
+                      }}
+                    >
+                      @{isFriend ? petUser.pets_data_1.username : petUser.username}
+                    </p>
+                  </div>
                   {isFriend && (
                     <>
                       {searchTerm === 'Friends' ? (
@@ -84,7 +89,3 @@ const SearchPet = ({ searchTerm, searchPets, handleClosePopup, isFriend = false,
 }
 
 export default SearchPet
-
-// TODO: Add a tweet on the home page
-// TODO: in the friend request page in SearchPets.jsx have name and the username under with flex-col
-// TODO: when you click your friends you should see the other persons profile, sometimes you see your own

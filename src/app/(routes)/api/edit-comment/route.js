@@ -6,14 +6,19 @@ export async function PATCH(request) {
   const commentId = searchParams.get('commentId')
   const username = searchParams.get('username')
   const comment = searchParams.get('comment')
+  const admin = searchParams.get('admin')
   let postId
 
   try {
-    if (!commentId || !username || !comment) {
-      return NextResponse.json({ error: 'Missing commentId or username or comment' }, { status: 400 })
+    if (!commentId || !username || !comment || !admin) {
+      return NextResponse.json({ error: 'Missing commentId or username or comment or admin prop' }, { status: 400 })
     }
-
-    let result = (await sql`SELECT * FROM Comments WHERE id = ${commentId} AND pets_username = ${username};`).rows[0]
+    let result
+    if (!admin) {
+      result = (await sql`SELECT * FROM Comments WHERE id = ${commentId} AND pets_username = ${username};`).rows[0]
+    } else {
+      result = (await sql`SELECT * FROM Comments WHERE id = ${commentId};`).rows[0]
+    }
 
     if (!result) {
       return NextResponse.json({ error: "This comment doesn't exist or you don't own it" }, { status: 400 })

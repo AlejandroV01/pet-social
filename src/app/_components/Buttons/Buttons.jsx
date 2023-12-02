@@ -9,6 +9,14 @@ export const PrimaryButton = ({ text }) => {
   )
 }
 
+export const AdminButton = ({ text }) => {
+  return (
+    <button className='text-center cursor-pointer bg-[#cc6572] text-white rounded-lg p-2 hover:bg-[#d6717e]' type={'submit'}>
+      <p>{text}</p>
+    </button>
+  )
+}
+
 export const SecondaryButton = ({ text }) => {
   return (
     <div className='text-center cursor-pointer bg-[#ffe7d0] text-black rounded-lg p-2 hover:bg-[#f1d5ba]'>

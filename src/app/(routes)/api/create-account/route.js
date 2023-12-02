@@ -11,7 +11,7 @@ export async function GET(request) {
 
   try {
     if (!username || !email || !password || !petName || !petType) throw new Error('Pet and owner names required')
-    await sql`INSERT INTO Pets (username, email, password, petName, petType) VALUES (${username}, ${email}, ${password}, ${petName}, ${petType});`
+    await sql`INSERT INTO Pets (username, email, password, petName, petType, is_admin) VALUES (${username}, ${email}, ${password}, ${petName}, ${petType}, FALSE);`
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 })
   }

@@ -10,7 +10,6 @@ const Tweet = ({
   id,
   text,
   likes,
-
   petName,
   petUsername,
   petType,
@@ -73,7 +72,7 @@ const Tweet = ({
             </div>
           </div>
         </div>
-        {petUsername === profile.username && (
+        {(petUsername === profile.username || profile.is_admin) && (
           <div className='ml-auto' onClick={() => handleDeletePost(id)}>
             <IconButton icon={<FaTrash />} />
           </div>
@@ -146,7 +145,7 @@ const Tweet = ({
                 <p className='text-black text-sm'>{comment.comment_text}</p>
               )}
             </div>
-            {comment.pets_username === profile.username && (
+            {(comment.pets_username === profile.username || profile.is_admin) && (
               <div className='flex items-center gap-2'>
                 <div
                   className='ml-auto'
