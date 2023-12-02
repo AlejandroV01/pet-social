@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 import { FaComments, FaEdit, FaPaw, FaTrash } from 'react-icons/fa'
 import { useGlobalStore } from '../../_util/store'
@@ -9,8 +10,7 @@ const Tweet = ({
   id,
   text,
   likes,
-  comments,
-  pfp,
+
   petName,
   petUsername,
   petType,
@@ -28,6 +28,7 @@ const Tweet = ({
   const [isEdit, setIsEdit] = React.useState(false)
   const [editCommentText, setEditCommentText] = React.useState('')
   const [editId, setEditId] = React.useState('')
+  const router = useRouter()
   return (
     <div className='shadow-2xl rounded-lg p-5 bg-[#ffd3a7] flex items-start flex-col w-full lg:w-[450px]'>
       <div className='flex gap-5 items-start'>
@@ -90,7 +91,15 @@ const Tweet = ({
             <ProfilePicture size={35} id={comment.pets_username} />
             <div className='flex flex-col items-start'>
               <div className='flex gap-2 flex-wrap '>
-                <p className='text-black font-bold text-sm mt-0'>{comment.pet_info.petName}</p>
+                <p
+                  className='text-black font-bold text-sm mt-0 cursor-pointer hover:underline'
+                  onClick={() => {
+                    console.log(comment)
+                    router.push(`/profile/${comment.pets_username}`)
+                  }}
+                >
+                  {comment.pet_info.petName}
+                </p>
                 <p className='text-neutral-500 text-sm mt-0'>@{comment.pets_username}</p>
                 <p className='text-neutral-400 text-sm mt-0'>({comment.pet_info.petType})</p>
               </div>

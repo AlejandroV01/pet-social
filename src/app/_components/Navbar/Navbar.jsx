@@ -33,12 +33,9 @@ const Navbar = () => {
         </Link>
         {isAuth && (
           <div className='flex gap-4 items-center'>
-            <Link href={'/'} className='text-white text-lg'>
-              Home
-            </Link>
-            <Link href={`/profile/${profile.id}`} className='text-white text-lg'>
+            <div onClick={() => router.push(`/profile/${profile.username}`)} className='text-white text-lg cursor-pointer'>
               Profile
-            </Link>
+            </div>
             <div onClick={handleSignOut}>
               <SecondaryButton text={'Sign Out'} />
             </div>

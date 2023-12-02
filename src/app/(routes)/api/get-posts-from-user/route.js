@@ -4,13 +4,14 @@ import { NextResponse } from 'next/server'
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
   const username = searchParams.get('username')
+
+  if (!username) {
+    return NextResponse.json({ error: 'Missing username' }, { status: 400 })
+  }
+
   try {
-    const currentPet = await sql`SELECT * FROM Pets WHERE username = ${username};`
-    if (!currentPet || currentPet.rows.length === 0) {
-      return NextResponse.json({ error: 'Requesting from a false username' }, { status: 500 })
-    }
-    const posts = await sql`
-  SELECT 
+    const data = await sql`
+    SELECT 
     p.id, 
     p.pets_username, 
     p.text, 
@@ -34,13 +35,14 @@ export async function GET(request) {
     Posts p
   JOIN 
     Pets pet ON p.pets_username = pet.username
+    WHERE p.pets_username = ${username}
     ORDER BY p.id DESC;
-    
-    `
-    const allPosts = posts.rows
-    return NextResponse.json({ allPosts }, { status: 200 })
+        `
+    const posts = data.rows
+    return NextResponse.json({ posts }, { status: 200 })
   } catch (error) {
     const errorMessage = error.message
+    console.log(errorMessage)
     return NextResponse.json({ errorMessage }, { status: 500 })
   }
 }

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import { PrimaryButton } from '../../../_components/Buttons/Buttons'
 import ProfilePicture from '../../../_components/ProfileAssets/ProfilePicture'
 import SearchPet from '../../../_components/SearchPet/SearchPet'
+import Tweet from '../../../_components/Tweet/Tweet'
 import { useGlobalStore } from '../../../_util/store'
 const Page = ({ params }) => {
   const router = useRouter()
@@ -17,23 +18,21 @@ const Page = ({ params }) => {
   const [isSearchFriend, setIsSearchFriend] = useState(false)
   const [isAddingPost, setIsAddingPost] = useState(false)
   const [postText, setPostText] = useState('')
-  const idUrl = params.id
+  const [posts, setPosts] = useState(null)
   useEffect(() => {
     if (!profile) {
       router.push('/')
     }
     loadData()
+    getPostsFromUser()
   }, [])
   const loadData = async () => {
-    const username = await loadVisitedProfile()
-    loadFriends(username)
-  }
-  const loadProfileData = () => {
-    console.log(idUrl, profile.id)
+    loadVisitedProfile()
+    loadFriends()
   }
   const loadVisitedProfile = async () => {
     try {
-      const response = await fetch(`/api/get-profile?id=${idUrl}`, {
+      const response = await fetch(`/api/get-profile?username=${params.username}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -41,7 +40,6 @@ const Page = ({ params }) => {
         const data = await response.json()
         console.log(data)
         setVisitedProfile(data.petData[0])
-        return data.petData[0].username
       } else {
         const error = await response.json()
         console.log(error)
@@ -50,11 +48,9 @@ const Page = ({ params }) => {
       console.error('Error', error)
     }
   }
-  const loadFriends = async username => {
-    console.log('loadFriends triggered')
-    if (username === undefined) username = visitedProfile.username
+  const loadFriends = async () => {
     try {
-      const response = await fetch(`/api/get-friends?pets_username_1=${username}&status=pending`, {
+      const response = await fetch(`/api/get-friends?pets_username_1=${params.username}&status=pending`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -70,7 +66,7 @@ const Page = ({ params }) => {
       console.error('Error', error)
     }
     try {
-      const response = await fetch(`/api/get-friends?pets_username_1=${username}&status=accepted`, {
+      const response = await fetch(`/api/get-friends?pets_username_1=${params.username}&status=accepted`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -98,6 +94,17 @@ const Page = ({ params }) => {
       })
       if (response.ok) {
         const data = await response.json()
+        console.log(data)
+        toast.info(data.message, {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
         loadFriends()
         handleClosePopup()
       } else {
@@ -110,16 +117,6 @@ const Page = ({ params }) => {
   }
   const handleAddPost = async (e, text) => {
     e.preventDefault()
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
     try {
       const response = await fetch(`/api/add-post?username=${profile.username}&text=${text}`, {
         method: 'POST',
@@ -137,6 +134,164 @@ const Page = ({ params }) => {
           progress: undefined,
           theme: 'dark',
         })
+        getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const getPostsFromUser = async () => {
+    try {
+      const response = await fetch(`/api/get-posts-from-user?username=${params.username}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        setPosts(data.posts)
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleLike = async id => {
+    try {
+      const response = await fetch(`/api/add-like?postId=${id}&username=${profile.username}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Post Liked!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleComment = async (e, id, commentText) => {
+    e.preventDefault()
+    try {
+      const response = await fetch(`/api/add-comment?postId=${id}&username=${profile.username}&comment=${commentText}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ commentText }),
+      })
+      if (response.ok) {
+        const data = await response.json()
+        console.log(data)
+        toast.success('Nice Comment!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleDeleteComment = async commentId => {
+    try {
+      const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Comment Deleted', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleEditComment = async (e, commentId, comment) => {
+    e.preventDefault()
+
+    try {
+      const response = await fetch(`/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Comment Edited', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        getPostsFromUser()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleDeletePost = async postId => {
+    try {
+      const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Post Deleted', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+        getPostsFromUser()
       } else {
         const error = await response.json()
         console.log(error)
@@ -156,14 +311,14 @@ const Page = ({ params }) => {
             <div className='flex gap-5'>
               <div
                 className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px] cursor-pointer'
-                onClick={() => setIsSearchFriend(true)}
+                onClick={params.username === profile.username ? () => setIsSearchFriend(true) : null}
               >
                 <p className='text-xl'>{friends.length}</p>
                 <p className='text-neutral-600 text-center text-sm'>Friends</p>
               </div>
               <div
                 className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px] cursor-pointer'
-                onClick={() => setIsSearchPending(true)}
+                onClick={params.username === profile.username ? () => setIsSearchPending(true) : null}
               >
                 <p className='text-xl'>{pendingFriend.length}</p>
                 <p className='text-neutral-600 text-center text-sm'>Pending Friends</p>
@@ -188,12 +343,15 @@ const Page = ({ params }) => {
               )}
             </div>
           )}
-          {visitedProfile.id !== parseInt(idUrl) ? (
+          {visitedProfile.username !== profile.username ? (
             <div className='flex gap-5'>
-              <div onClick={loadProfileData}>
-                <PrimaryButton text={'Follow'} />
+              <div
+                onClick={() => {
+                  handleAddFriend(profile.username, visitedProfile.username, 'pending')
+                }}
+              >
+                <PrimaryButton text={'Request Friend'} />
               </div>
-              <PrimaryButton text={'Message'} />
             </div>
           ) : (
             <div className='flex flex-col gap-5 items-center'>
@@ -232,6 +390,28 @@ const Page = ({ params }) => {
               )}
             </div>
           )}
+          <h2 className='text-2xl font-bold'>Posts</h2>
+          {posts !== null &&
+            posts.map(post => {
+              return (
+                <Tweet
+                  key={post.id}
+                  id={post.id}
+                  likes={post.like_count}
+                  petName={post.petname}
+                  petUsername={post.pets_username}
+                  petType={post.pettype}
+                  text={post.text}
+                  liked={post.liked_by_user}
+                  commentsArray={post.comments}
+                  handleLike={handleLike}
+                  handleComment={handleComment}
+                  handleDeleteComment={handleDeleteComment}
+                  handleDeletePost={handleDeletePost}
+                  handleEditComment={handleEditComment}
+                />
+              )
+            })}
         </div>
       )}
     </>

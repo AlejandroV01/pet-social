@@ -37,16 +37,6 @@ const Feed = () => {
     }
   }
   const handleLike = async id => {
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
     try {
       const response = await fetch(`/api/add-like?postId=${id}&username=${profile.username}`, {
         method: 'POST',
@@ -75,16 +65,7 @@ const Feed = () => {
   }
   const handleSearch = async e => {
     e.preventDefault()
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
+
     try {
       const response = await fetch(`/api/search-pet?search=${searchTerm}`, {
         method: 'GET',
@@ -114,16 +95,7 @@ const Feed = () => {
   }
   const handleComment = async (e, id, commentText) => {
     e.preventDefault()
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
+
     try {
       const response = await fetch(`/api/add-comment?postId=${id}&username=${profile.username}&comment=${commentText}`, {
         method: 'POST',
@@ -156,16 +128,6 @@ const Feed = () => {
     setSearchVisible(false)
   }
   const handleDeleteComment = async commentId => {
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
     try {
       const response = await fetch(`/api/delete-comment?commentId=${commentId}&username=${profile.username}`, {
         method: 'DELETE',
@@ -194,16 +156,7 @@ const Feed = () => {
   }
   const handleEditComment = async (e, commentId, comment) => {
     e.preventDefault()
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
+
     try {
       const response = await fetch(`/api/edit-comment?commentId=${commentId}&username=${profile.username}&comment=${comment}`, {
         method: 'PATCH',
@@ -231,16 +184,6 @@ const Feed = () => {
     }
   }
   const handleDeletePost = async postId => {
-    toast.info('Loading...', {
-      position: 'bottom-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    })
     try {
       const response = await fetch(`/api/delete-post?username=${profile.username}&postId=${postId}`, {
         method: 'DELETE',
