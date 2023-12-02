@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { PrimaryButton } from '../../../_components/Buttons/Buttons'
 import ProfilePicture from '../../../_components/ProfileAssets/ProfilePicture'
 import SearchPet from '../../../_components/SearchPet/SearchPet'
@@ -14,7 +15,8 @@ const Page = ({ params }) => {
   const [visitedProfile, setVisitedProfile] = useState(null)
   const [isSearchPending, setIsSearchPending] = useState(false)
   const [isSearchFriend, setIsSearchFriend] = useState(false)
-
+  const [isAddingPost, setIsAddingPost] = useState(false)
+  const [postText, setPostText] = useState('')
   const idUrl = params.id
   useEffect(() => {
     if (!profile) {
@@ -37,6 +39,7 @@ const Page = ({ params }) => {
       })
       if (response.ok) {
         const data = await response.json()
+        console.log(data)
         setVisitedProfile(data.petData[0])
         return data.petData[0].username
       } else {
@@ -48,6 +51,8 @@ const Page = ({ params }) => {
     }
   }
   const loadFriends = async username => {
+    console.log('loadFriends triggered')
+    if (username === undefined) username = visitedProfile.username
     try {
       const response = await fetch(`/api/get-friends?pets_username_1=${username}&status=pending`, {
         method: 'GET',
@@ -85,7 +90,61 @@ const Page = ({ params }) => {
     setIsSearchFriend(false)
     setIsSearchPending(false)
   }
-  console.log(pendingFriend)
+  const handleAddFriend = async (pets_username_1, pets_username_2, status) => {
+    try {
+      const response = await fetch(`/api/add-friend?pets_username_1=${pets_username_1}&pets_username_2=${pets_username_2}&status=${status}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        loadFriends()
+        handleClosePopup()
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
+  const handleAddPost = async (e, text) => {
+    e.preventDefault()
+    toast.info('Loading...', {
+      position: 'bottom-right',
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    })
+    try {
+      const response = await fetch(`/api/add-post?username=${profile.username}&text=${text}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (response.ok) {
+        const data = await response.json()
+        toast.success('Successfully Barked a Post!', {
+          position: 'bottom-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        })
+      } else {
+        const error = await response.json()
+        console.log(error)
+      }
+    } catch (error) {
+      console.error('Error', error)
+    }
+  }
   return (
     <>
       {visitedProfile !== null && profile !== null && (
@@ -104,12 +163,26 @@ const Page = ({ params }) => {
                 <p className='text-neutral-600 text-center text-sm'>Pending Friends</p>
               </div>
               {isSearchPending && (
-                <SearchPet handleClosePopup={handleClosePopup} searchTerm={'Pending Friends'} searchPets={pendingFriend} isFriend />
+                <SearchPet
+                  handleClosePopup={handleClosePopup}
+                  searchTerm={'Pending Friends'}
+                  searchPets={pendingFriend}
+                  isFriend
+                  handleAddFriend={handleAddFriend}
+                />
               )}
-              {isSearchFriend && <SearchPet handleClosePopup={handleClosePopup} searchTerm={'Friends'} searchPets={friends} isFriend />}
+              {isSearchFriend && (
+                <SearchPet
+                  handleClosePopup={handleClosePopup}
+                  searchTerm={'Friends'}
+                  searchPets={friends}
+                  isFriend
+                  handleAddFriend={handleAddFriend}
+                />
+              )}
             </div>
           )}
-          {visitedProfile.id !== parseInt(visitedProfile) ? (
+          {visitedProfile.id !== parseInt(idUrl) ? (
             <div className='flex gap-5'>
               <div onClick={loadProfileData}>
                 <PrimaryButton text={'Follow'} />
@@ -117,20 +190,42 @@ const Page = ({ params }) => {
               <PrimaryButton text={'Message'} />
             </div>
           ) : (
-            <div className='flex gap-5'>
-              <PrimaryButton text={'Edit Profile'} />
-              <PrimaryButton text={'Add a Post'} />
+            <div className='flex flex-col gap-5 items-center'>
+              <div className='flex gap-5'>
+                <PrimaryButton text={'Edit Profile'} />
+                <div onClick={() => setIsAddingPost(!isAddingPost)}>
+                  <PrimaryButton text={'Add a Post'} />
+                </div>
+                <div
+                  onClick={() => {
+                    removeProfile()
+                    router.push('/')
+                  }}
+                >
+                  <PrimaryButton text={'Sign Out'} />
+                </div>
+              </div>
+              {isAddingPost && (
+                <form
+                  className='flex gap-2 mt-3 w-full'
+                  onSubmit={e => {
+                    handleAddPost(e, postText)
+                    setIsAddingPost(false)
+                    setPostText('')
+                  }}
+                >
+                  <input
+                    type='text'
+                    placeholder='Post something...'
+                    className='rounded-lg flex-1 pl-2'
+                    onChange={e => setPostText(e.target.value)}
+                    value={postText}
+                  />
+                  <PrimaryButton text={'Post!'} />
+                </form>
+              )}
             </div>
           )}
-
-          <div
-            onClick={() => {
-              removeProfile()
-              router.push('/')
-            }}
-          >
-            <PrimaryButton text={'Sign Out'} />
-          </div>
         </div>
       )}
     </>
