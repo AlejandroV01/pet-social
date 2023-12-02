@@ -27,7 +27,7 @@ const CreateAccount = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/create-account?username=${username}&email=${email}&password=${password}&petName=${petName}&petType=${petType}`,
+        `/api/create-account?username=${username}&email=${email}&password=${password}&petName=${petName}&petType=${petType}`,
         {
           method: 'GET',
         }
@@ -68,7 +68,7 @@ const CreateAccount = () => {
 
   return (
     <div className='bg-white px-6 py-6 rounded-xl max-w-[400px] w-full'>
-      <h1 className='text-orange-600 text-sm text-center'>Looks like you don&apos;t have an account</h1>
+      <h1 className='text-orange-600 text-sm text-center'>Don&apos;t have an account?</h1>
       <h1 className='text-center text-3xl mb-3 font-bold'>Create Account</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-3'>
         <label className='flex justify-between'>

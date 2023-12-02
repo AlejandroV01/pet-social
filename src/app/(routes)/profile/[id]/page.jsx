@@ -154,11 +154,17 @@ const Page = ({ params }) => {
           <p className='text-neutral-500'>@{visitedProfile.username}</p>
           {pendingFriend != null && friends !== null && (
             <div className='flex gap-5'>
-              <div className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px]' onClick={() => setIsSearchFriend(true)}>
+              <div
+                className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px] cursor-pointer'
+                onClick={() => setIsSearchFriend(true)}
+              >
                 <p className='text-xl'>{friends.length}</p>
                 <p className='text-neutral-600 text-center text-sm'>Friends</p>
               </div>
-              <div className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px]' onClick={() => setIsSearchPending(true)}>
+              <div
+                className='rounded-lg bg-orange-300 p-2 flex flex-col gap-2 items-center w-[125px] cursor-pointer'
+                onClick={() => setIsSearchPending(true)}
+              >
                 <p className='text-xl'>{pendingFriend.length}</p>
                 <p className='text-neutral-600 text-center text-sm'>Pending Friends</p>
               </div>
